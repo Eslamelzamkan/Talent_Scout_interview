@@ -234,9 +234,7 @@ async def _record_integrity_flag(
                 payload={
                     "flag_type": flag_type,
                     "timestamp": (
-                        _parse_timestamp(timestamp).isoformat()
-                        if timestamp
-                        else _now().isoformat()
+                        _parse_timestamp(timestamp).isoformat() if timestamp else _now().isoformat()
                     ),
                 },
             )
@@ -465,9 +463,7 @@ async def candidate_ws(websocket: WebSocket, session_id: UUID) -> None:
         await websocket.send_json(
             {
                 "event": (
-                    "interview_complete"
-                    if state.get("interview_complete")
-                    else "interview_state"
+                    "interview_complete" if state.get("interview_complete") else "interview_state"
                 ),
                 "data": _interview_state_payload(interview, state),
             }

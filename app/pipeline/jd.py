@@ -168,9 +168,7 @@ async def _lint(dimensions: list[dict[str, Any]]) -> list[dict[str, Any]]:
     )
     payload = _parse_json_response(_message_content(response))
     issues = (
-        payload.get("issues", payload.get("warnings", []))
-        if isinstance(payload, dict)
-        else payload
+        payload.get("issues", payload.get("warnings", [])) if isinstance(payload, dict) else payload
     )
     if not isinstance(issues, list):
         raise ValueError("jd linting response must be a JSON list")
@@ -213,6 +211,7 @@ async def _seed_question_bank(job_id: str, extracted: dict[str, Any]) -> int:
         for topic in extracted["question_seed_topics"][:3]
         for lane in _dimension_lanes(dimension, bool(extracted.get("requires_coding")))
     ]
+
     async def _limited_generate(
         dimension: str,
         description: str,

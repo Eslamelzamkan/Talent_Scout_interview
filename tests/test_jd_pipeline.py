@@ -68,7 +68,7 @@ def test_weight_already_correct() -> None:
 
 
 def test_json_strips_fences() -> None:
-    payload = jd_module._parse_json_response("```json\n{\"role_title\": \"Backend Engineer\"}\n```")
+    payload = jd_module._parse_json_response('```json\n{"role_title": "Backend Engineer"}\n```')
     assert payload == {"role_title": "Backend Engineer"}
 
 

@@ -219,6 +219,7 @@ def _test_app(session_factory: async_sessionmaker[AsyncSession]) -> FastAPI:
             yield session
 
     from app.core.db import get_session
+
     app.dependency_overrides[get_session] = override_get_session
     return app
 
@@ -403,14 +404,12 @@ class TestInterviewPlanning:
 
     def test_process_answer_route_skips_live_scoring_for_follow_up(self) -> None:
         assert (
-            interview._after_process_answer_route(
-                _state(answer_is_shallow=True)
-            ) == "generate_question"
+            interview._after_process_answer_route(_state(answer_is_shallow=True))
+            == "generate_question"
         )
         assert (
-            interview._after_process_answer_route(
-                _state(answer_is_shallow=False)
-            ) == "evaluate_answer"
+            interview._after_process_answer_route(_state(answer_is_shallow=False))
+            == "evaluate_answer"
         )
 
 

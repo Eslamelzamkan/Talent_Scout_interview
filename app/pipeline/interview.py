@@ -44,7 +44,6 @@ log = structlog.get_logger()
 settings = get_settings()
 
 
-
 class InterviewState(TypedDict):
     session_id: str
     candidate_id: str
@@ -101,8 +100,6 @@ def _strip_json(text: str) -> str:
     return cleaned
 
 
-
-
 def _rubric_dimensions(job_context: dict[str, Any]) -> list[RubricDimension]:
     raw = job_context.get("rubric") or []
     if isinstance(raw, dict):
@@ -144,11 +141,7 @@ def _candidate_evidence_lines(
         term.lower() for term in re.split(r"[^a-zA-Z0-9]+", dimension) if term.strip()
     }
     evidence = context.evidence_snippets()
-    matched = [
-        item
-        for item in evidence
-        if any(term in item.lower() for term in dimension_terms)
-    ]
+    matched = [item for item in evidence if any(term in item.lower() for term in dimension_terms)]
     lane_pool_map = {
         "technical_fundamentals": [
             *context.project_highlights,
@@ -448,9 +441,9 @@ def _pick_next_dimension(state: InterviewState, preferred_lane: str | None = Non
         compatible = set(names)
     coverage = state.get("dimension_coverage", {})
     scores = state.get("dimension_scores_live", {})
-    candidates = [
-        name for name in names if coverage.get(name, 0) < 2 and name in compatible
-    ] or [name for name in names if name in compatible]
+    candidates = [name for name in names if coverage.get(name, 0) < 2 and name in compatible] or [
+        name for name in names if name in compatible
+    ]
     if not candidates:
         candidates = names
     for weak_area in state.get("weak_areas", []):
@@ -483,15 +476,22 @@ async def _adapt_question(
         return template or _default_template(state, dimension, lane)
     prompt = (
         f"Candidate: {state['candidate_name']}\n"
-        f"Role: {state['job_context'].get('role_title')
-            or state['job_context'].get('title') or 'unknown'}\n"
+        f"Role: {
+            state['job_context'].get('role_title') or state['job_context'].get('title') or 'unknown'
+        }\n"
         f"Weak areas: {', '.join(state.get('weak_areas', [])) or 'none'}\n"
         f"Skills: {', '.join(state.get('extracted_skills', [])) or 'unspecified'}\n"
         f"Dimension: {dimension}\n"
-        f"Dimension description: {next(
-            (item.description for item in
-             _rubric_dimensions(state['job_context'])
-             if item.name == dimension), '')}\n"
+        f"Dimension description: {
+            next(
+                (
+                    item.description
+                    for item in _rubric_dimensions(state['job_context'])
+                    if item.name == dimension
+                ),
+                '',
+            )
+        }\n"
         f"Question lane: {lane}\n"
         f"Question focus: {focus or 'none'}\n"
         f"Template: {template}\n"
@@ -504,8 +504,7 @@ async def _adapt_question(
     )
     if previous_exchange is not None:
         prompt += (
-            f"Previous question: {previous_exchange[0]}\n"
-            f"Previous answer: {previous_exchange[1]}\n"
+            f"Previous question: {previous_exchange[0]}\nPrevious answer: {previous_exchange[1]}\n"
         )
     if state.get("answer_is_shallow"):
         prompt += (
@@ -569,9 +568,7 @@ async def _depth_check(answer: str, lane: str) -> dict[str, Any]:
     ):
         fallback_missing.append("specific example")
     ownership_kw = (" i ", " my role", "i led", "i owned", "i was responsible")
-    if lane == "behavioral" and not any(
-        keyword in lowered for keyword in ownership_kw
-    ):
+    if lane == "behavioral" and not any(keyword in lowered for keyword in ownership_kw):
         fallback_missing.append("personal ownership")
     fallback = token_count >= 25 and len(fallback_missing) <= 1
     if core.llm is None:
@@ -825,13 +822,10 @@ async def check_completion(state: InterviewState) -> dict[str, Any]:
     lane_targets = dict((state.get("interview_plan") or {}).get("lane_targets") or {})
     lane_counts = state.get("question_lane_counts", {})
     lane_targets_met = all(
-        int(lane_counts.get(lane, 0)) >= int(target)
-        for lane, target in lane_targets.items()
+        int(lane_counts.get(lane, 0)) >= int(target) for lane, target in lane_targets.items()
     )
     plan = state.get("interview_plan") or {}
-    planned_total = int(
-        plan.get("target_total") or settings.max_questions
-    )
+    planned_total = int(plan.get("target_total") or settings.max_questions)
     complete = state.get("total_questions_asked", 0) >= settings.max_questions or (
         state.get("total_questions_asked", 0) >= planned_total
         and all_dimensions_covered

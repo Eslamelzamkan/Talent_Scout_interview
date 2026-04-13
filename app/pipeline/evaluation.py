@@ -62,8 +62,6 @@ def _utcnow() -> datetime:
     return datetime.now(timezone.utc)
 
 
-
-
 def _job_context_payload(job_context: ParsedJobContext | dict[str, Any]) -> dict[str, Any]:
     if isinstance(job_context, ParsedJobContext):
         return job_context.model_dump(mode="json", by_alias=True)
@@ -85,8 +83,6 @@ def _content_text(message: BaseMessage) -> str:
     return " ".join(
         item if isinstance(item, str) else str(item.get("text") or "") for item in content or []
     ).strip()
-
-
 
 
 def _transcript_rows_from_messages(messages: list[BaseMessage]) -> list[dict[str, Any]]:
@@ -247,10 +243,7 @@ async def run_ensemble_judge(
         for index in range(3)
     ]
     results = await asyncio.gather(
-        *[
-            _ask_judge(model, prompt)
-            for model, prompt in zip(_judge_models(), prompts, strict=True)
-        ]
+        *[_ask_judge(model, prompt) for model, prompt in zip(_judge_models(), prompts, strict=True)]
     )
     aggregated = _aggregate_judges(list(results))
     aggregated["dimension"] = dimension_model.name
@@ -399,9 +392,7 @@ async def build_scorecard(session_id: str) -> Scorecard:
         for dimension in rubric:
             bucket = grouped.get(dimension.name, [])
             average_score = (
-                sum(float(item["score"]) for item in bucket) / len(bucket)
-                if bucket
-                else 2.0
+                sum(float(item["score"]) for item in bucket) / len(bucket) if bucket else 2.0
             )
             normalised = (average_score - 1.0) / 2.0
             flagged = any(bool(item["is_flagged"]) for item in bucket)

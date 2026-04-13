@@ -270,9 +270,7 @@ def _normalize_rubric(value: Any) -> list[dict[str, Any]]:
     if value is None:
         return []
     raw_dimensions = value.get("dimensions", value) if isinstance(value, Mapping) else value
-    return [
-        RubricDimension.model_validate(item).model_dump(mode="json") for item in raw_dimensions
-    ]
+    return [RubricDimension.model_validate(item).model_dump(mode="json") for item in raw_dimensions]
 
 
 def _normalize_dimension_scores(value: Any) -> dict[str, dict[str, Any]]:

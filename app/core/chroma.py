@@ -81,9 +81,7 @@ async def retrieve(
     ]
     if lane:
         where_conditions.append({"lane": lane})
-    where_filter = (
-        {"$and": where_conditions} if len(where_conditions) > 1 else where_conditions[0]
-    )
+    where_filter = {"$and": where_conditions} if len(where_conditions) > 1 else where_conditions[0]
     results = await collection.query(
         where=where_filter,
         **query_kwargs,
