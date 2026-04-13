@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from datetime import datetime, timedelta, timezone
 from enum import Enum
 from typing import Any
@@ -161,7 +162,7 @@ async def get_ws_user(websocket: WebSocket) -> AuthUser:
     return _extract_user(payload)
 
 
-def require_role(*roles: Role):
+def require_role(*roles: Role) -> Callable[..., Any]:
     """Return a dependency that enforces the user has one of the given roles."""
 
     async def checker(user: AuthUser = Depends(get_current_user)) -> AuthUser:

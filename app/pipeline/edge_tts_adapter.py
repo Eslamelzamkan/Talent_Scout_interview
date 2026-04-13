@@ -24,7 +24,7 @@ class EdgeTTS(TTS):
     def provider(self) -> str:
         return "edge-tts"
 
-    def synthesize(
+    def synthesize(  # type: ignore[override]
         self,
         text: str,
         *,

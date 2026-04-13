@@ -25,7 +25,7 @@ async def health() -> dict[str, Any]:
             log.exception("health_llm_check_failed")
     if core.redis is not None:
         try:
-            checks["redis"] = bool(await core.redis.ping())
+            checks["redis"] = bool(await core.redis.ping())  # type: ignore[misc]
         except Exception:
             log.exception("health_redis_check_failed")
     chroma_client = getattr(core.chroma, "_chroma", None)

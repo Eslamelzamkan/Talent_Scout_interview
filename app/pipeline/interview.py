@@ -639,7 +639,7 @@ async def init_session(state: InterviewState) -> dict[str, Any]:
         "dimension_scores_live": scores,
         "interview_plan": plan,
     }
-    for key, default in {
+    for key, default in {  # type: ignore[var-annotated]
         "candidate_context": _candidate_context_model(state).model_dump(mode="json"),
         "question_lane_counts": {lane: 0 for lane in QUESTION_LANES},
         "questions_asked": [],
@@ -907,15 +907,15 @@ def _after_process_answer_route(state: InterviewState) -> str:
 
 def build_graph(checkpointer: Any) -> CompiledStateGraph:
     builder = StateGraph(InterviewState)
-    builder.add_node("init_session", init_session)
-    builder.add_node("await_input", await_input)
-    builder.add_node("select_dimension", select_dimension)
-    builder.add_node("generate_question", generate_question)
-    builder.add_node("process_answer", process_answer)
-    builder.add_node("evaluate_answer", evaluate_answer)
-    builder.add_node("check_completion", check_completion)
-    builder.add_node("hitl", hitl_checkpoint)
-    builder.add_node("finalise", finalise_session)
+    builder.add_node("init_session", init_session)  # type: ignore[arg-type]
+    builder.add_node("await_input", await_input)  # type: ignore[arg-type]
+    builder.add_node("select_dimension", select_dimension)  # type: ignore[arg-type]
+    builder.add_node("generate_question", generate_question)  # type: ignore[arg-type]
+    builder.add_node("process_answer", process_answer)  # type: ignore[arg-type]
+    builder.add_node("evaluate_answer", evaluate_answer)  # type: ignore[arg-type]
+    builder.add_node("check_completion", check_completion)  # type: ignore[arg-type]
+    builder.add_node("hitl", hitl_checkpoint)  # type: ignore[arg-type]
+    builder.add_node("finalise", finalise_session)  # type: ignore[arg-type]
     builder.add_edge(START, "init_session")
     builder.add_conditional_edges(
         "init_session",

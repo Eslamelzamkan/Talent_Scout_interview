@@ -82,7 +82,7 @@ async def _transcript_text(session: AsyncSession, interview: InterviewSession) -
         await session.exec(
             select(InterviewMessage)
             .where(InterviewMessage.session_id == interview.id)
-            .order_by(InterviewMessage.sequence_number, InterviewMessage.created_at)
+            .order_by(InterviewMessage.sequence_number, InterviewMessage.created_at)  # type: ignore[arg-type]
         )
     ).all()
     if not messages:
@@ -273,7 +273,7 @@ async def recruiter_scorecards(
     rows = (
         await session.exec(
             select(Scorecard, InterviewSession)
-            .join(InterviewSession, Scorecard.session_id == InterviewSession.id)
+            .join(InterviewSession, Scorecard.session_id == InterviewSession.id)  # type: ignore[arg-type]
             .where(Scorecard.job_id == job_id)
         )
     ).all()
@@ -303,7 +303,7 @@ async def recruiter_scorecard_detail(
     row = (
         await session.exec(
             select(Scorecard, InterviewSession)
-            .join(InterviewSession, Scorecard.session_id == InterviewSession.id)
+            .join(InterviewSession, Scorecard.session_id == InterviewSession.id)  # type: ignore[arg-type]
             .where(Scorecard.job_id == job_id)
             .where(Scorecard.candidate_id == candidate_id)
         )
@@ -331,7 +331,7 @@ async def recruiter_override(
     row = (
         await session.exec(
             select(Scorecard, InterviewSession)
-            .join(InterviewSession, Scorecard.session_id == InterviewSession.id)
+            .join(InterviewSession, Scorecard.session_id == InterviewSession.id)  # type: ignore[arg-type]
             .where(Scorecard.job_id == job_id)
             .where(Scorecard.candidate_id == payload.candidate_id)
         )
@@ -464,7 +464,7 @@ async def output_scorecards(
     rows = (
         await session.exec(
             select(Scorecard, InterviewSession)
-            .join(InterviewSession, Scorecard.session_id == InterviewSession.id)
+            .join(InterviewSession, Scorecard.session_id == InterviewSession.id)  # type: ignore[arg-type]
             .where(Scorecard.job_id == job_id)
             .where(Scorecard.is_finalized)
         )

@@ -52,8 +52,8 @@ async def seed(job_id: str, questions: list[dict[str, Any]], *, replace: bool = 
     await collection.upsert(
         ids=ids,
         documents=texts,
-        embeddings=embeddings,
-        metadatas=metadatas,
+        embeddings=embeddings,  # type: ignore[arg-type]
+        metadatas=metadatas,  # type: ignore[arg-type]
     )
     return len(questions)
 
@@ -83,19 +83,19 @@ async def retrieve(
         where_conditions.append({"lane": lane})
     where_filter = {"$and": where_conditions} if len(where_conditions) > 1 else where_conditions[0]
     results = await collection.query(
-        where=where_filter,
-        **query_kwargs,
+        where=where_filter,  # type: ignore[arg-type]
+        **query_kwargs,  # type: ignore[arg-type]
     )
     documents = results.get("documents", [[]])
-    if lane and not documents[0]:
+    if lane and not documents[0]:  # type: ignore[index]
         results = await collection.query(
-            where={"$and": [{"dimension": dimension}, {"seniority": seniority}]},
-            **query_kwargs,
+            where={"$and": [{"dimension": dimension}, {"seniority": seniority}]},  # type: ignore[arg-type]
+            **query_kwargs,  # type: ignore[arg-type]
         )
         documents = results.get("documents", [[]])
     filtered: list[str] = []
     seen: set[str] = set()
-    for item in documents[0]:
+    for item in documents[0]:  # type: ignore[index]
         if not item or item in excluded or item in seen:
             continue
         filtered.append(item)
@@ -125,9 +125,9 @@ async def retrieve_questions(job_id: str, topic: str, k: int = 5) -> list[str]:
     collection = await chroma.get_or_create_collection(_collection_name(job_id))
     query_embedding = (await llm.embed([topic]))[0]
     results = await collection.query(
-        query_embeddings=[query_embedding],
+        query_embeddings=[query_embedding],  # type: ignore[arg-type]
         where={"dimension": topic},
         n_results=k,
         include=["documents"],
     )
-    return [item for item in results.get("documents", [[]])[0] if item]
+    return [item for item in results.get("documents", [[]])[0] if item]  # type: ignore[index]

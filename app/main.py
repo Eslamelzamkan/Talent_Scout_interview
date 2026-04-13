@@ -4,6 +4,7 @@ import asyncio
 import logging
 import os
 import sys
+from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
 import chromadb
@@ -42,7 +43,7 @@ def _configure_logging() -> None:
 
 
 @asynccontextmanager
-async def lifespan(_: FastAPI):
+async def lifespan(_: FastAPI) -> AsyncIterator[None]:
     _configure_logging()
     if settings.langsmith_api_key:
         os.environ["LANGCHAIN_TRACING_V2"] = "true"

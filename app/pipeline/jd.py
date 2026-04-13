@@ -155,7 +155,8 @@ async def _extract(jd_text: str) -> dict[str, Any]:
         "requires_coding": bool(payload.get("requires_coding", False)),
     }
     extracted["question_seed_topics"] = extracted["question_seed_topics"] or [
-        item["name"] for item in extracted["rubric_dimensions"][:5]
+        item["name"]
+        for item in extracted["rubric_dimensions"][:5]  # type: ignore[index]
     ]
     return extracted
 

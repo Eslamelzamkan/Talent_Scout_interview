@@ -95,7 +95,7 @@ class TalentScoutAgent(VoicePipelineAgent):
             stt=stt,
             llm=None,
             tts=tts,
-            turn_detection=turn_detection,
+            turn_detection=turn_detection,  # type: ignore[arg-type]
             allow_interruptions=True,
         )
         self.session_id = session_id

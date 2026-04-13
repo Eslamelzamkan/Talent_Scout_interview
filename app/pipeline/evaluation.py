@@ -335,7 +335,7 @@ async def build_scorecard(session_id: str) -> Scorecard:
         bundle = (
             await db.exec(
                 select(InterviewSession, ParsedJobContext)
-                .join(ParsedJobContext, InterviewSession.job_id == ParsedJobContext.job_id)
+                .join(ParsedJobContext, InterviewSession.job_id == ParsedJobContext.job_id)  # type: ignore[arg-type]
                 .where(InterviewSession.id == session_key)
             )
         ).first()
@@ -360,18 +360,18 @@ async def build_scorecard(session_id: str) -> Scorecard:
                 await db.exec(
                     select(InterviewMessage)
                     .where(InterviewMessage.session_id == interview.id)
-                    .order_by(InterviewMessage.sequence_number, InterviewMessage.created_at)
+                    .order_by(InterviewMessage.sequence_number, InterviewMessage.created_at)  # type: ignore[arg-type]
                 )
             ).all()
-            for question, answer in _pair_messages(list(messages)):
-                if answer.scoreable is False or not question.dimension_targeted:
+            for question, answer in _pair_messages(list(messages)):  # type: ignore[assignment]
+                if answer.scoreable is False or not question.dimension_targeted:  # type: ignore[attr-defined]
                     continue
                 dimension = next(
-                    (item for item in rubric if item.name == question.dimension_targeted),
+                    (item for item in rubric if item.name == question.dimension_targeted),  # type: ignore[attr-defined]
                     None,
                 )
                 if dimension is not None:
-                    pairs.append((question.content, answer.content, dimension))
+                    pairs.append((question.content, answer.content, dimension))  # type: ignore[attr-defined]
         results = (
             await asyncio.gather(
                 *[

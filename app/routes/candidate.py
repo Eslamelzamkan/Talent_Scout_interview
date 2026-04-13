@@ -124,7 +124,7 @@ async def _candidate_session_bundle(
         row = (
             await effective_db.exec(
                 select(InterviewSession, ParsedJobContext)
-                .join(ParsedJobContext, InterviewSession.job_id == ParsedJobContext.job_id)
+                .join(ParsedJobContext, InterviewSession.job_id == ParsedJobContext.job_id)  # type: ignore[arg-type]
                 .where(InterviewSession.id == session_id)
             )
         ).first()
@@ -318,7 +318,7 @@ async def session_info(
     row = (
         await session.exec(
             select(InterviewSession, ParsedJobContext)
-            .join(ParsedJobContext, InterviewSession.job_id == ParsedJobContext.job_id)
+            .join(ParsedJobContext, InterviewSession.job_id == ParsedJobContext.job_id)  # type: ignore[arg-type]
             .where(InterviewSession.id == session_id)
         )
     ).first()

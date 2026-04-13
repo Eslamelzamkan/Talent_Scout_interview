@@ -338,7 +338,7 @@ class LLMClient:
             model=model,
             temperature=temperature,
             base_url=self._base_url_for_provider(provider),
-            openai_api_key=api_key,
+            openai_api_key=api_key,  # type: ignore[call-arg]
             default_headers=headers,
         )
 
