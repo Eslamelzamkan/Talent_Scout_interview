@@ -53,8 +53,10 @@ async def ensure_schema_ready() -> None:
     expected_revisions = set(ScriptDirectory.from_config(alembic_config).get_heads())
     if applied_revisions != expected_revisions:
         raise RuntimeError(
-            "database schema is out of date; run 'alembic upgrade head' before starting the app. "
-            f"Current revisions: {sorted(applied_revisions)}; expected: {sorted(expected_revisions)}"
+            "database schema is out of date; "
+            "run 'alembic upgrade head' before starting the app. "
+            f"Current revisions: {sorted(applied_revisions)}; "
+            f"expected: {sorted(expected_revisions)}"
         )
 
 

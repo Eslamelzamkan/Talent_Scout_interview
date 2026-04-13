@@ -21,11 +21,23 @@ from app.core.constants import (
     BUSINESS_KEYWORDS,
     QUESTION_LANES,
     TECHNICAL_KEYWORDS,
+)
+from app.core.constants import (
     lane_rules as get_lane_rules,
-    meta_bool as _meta_bool,
+)
+from app.core.constants import (
     message_content as _raw_message_content,
 )
-from app.models import CandidateContext, InterviewSession, ParsedJobContext, RubricDimension, RubricModel
+from app.core.constants import (
+    meta_bool as _meta_bool,
+)
+from app.models import (
+    CandidateContext,
+    InterviewSession,
+    ParsedJobContext,
+    RubricDimension,
+    RubricModel,
+)
 from app.pipeline import evaluation
 
 log = structlog.get_logger()
@@ -471,18 +483,24 @@ async def _adapt_question(
         return template or _default_template(state, dimension, lane)
     prompt = (
         f"Candidate: {state['candidate_name']}\n"
-        f"Role: {state['job_context'].get('role_title') or state['job_context'].get('title') or 'unknown'}\n"
+        f"Role: {state['job_context'].get('role_title')
+            or state['job_context'].get('title') or 'unknown'}\n"
         f"Weak areas: {', '.join(state.get('weak_areas', [])) or 'none'}\n"
         f"Skills: {', '.join(state.get('extracted_skills', [])) or 'unspecified'}\n"
         f"Dimension: {dimension}\n"
-        f"Dimension description: {next((item.description for item in _rubric_dimensions(state['job_context']) if item.name == dimension), '')}\n"
+        f"Dimension description: {next(
+            (item.description for item in
+             _rubric_dimensions(state['job_context'])
+             if item.name == dimension), '')}\n"
         f"Question lane: {lane}\n"
         f"Question focus: {focus or 'none'}\n"
         f"Template: {template}\n"
         f"Follow-up required: {state.get('answer_is_shallow', False)}\n"
         f"Lane rules: {_lane_prompt_rules(lane)}\n"
         f"Candidate summary: {_candidate_context_model(state).summary or 'none'}\n"
-        f"Candidate evidence:\n- " + ("\n- ".join(evidence_lines) if evidence_lines else "none") + "\n"
+        "Candidate evidence:\n- "
+        + ("\n- ".join(evidence_lines) if evidence_lines else "none")
+        + "\n"
     )
     if previous_exchange is not None:
         prompt += (
@@ -550,8 +568,9 @@ async def _depth_check(answer: str, lane: str) -> dict[str, Any]:
         )
     ):
         fallback_missing.append("specific example")
+    ownership_kw = (" i ", " my role", "i led", "i owned", "i was responsible")
     if lane == "behavioral" and not any(
-        keyword in lowered for keyword in (" i ", " my role", "i led", "i owned", "i was responsible")
+        keyword in lowered for keyword in ownership_kw
     ):
         fallback_missing.append("personal ownership")
     fallback = token_count >= 25 and len(fallback_missing) <= 1
@@ -569,9 +588,12 @@ async def _depth_check(answer: str, lane: str) -> dict[str, Any]:
                 {
                     "role": "system",
                     "content": (
-                        "Return JSON with is_substantive (bool), should_follow_up (bool), "
-                        "missing_signals (array of short strings), and follow_up_angle (string or null). "
-                        "Assess whether the answer lacks concrete examples, metrics, reasoning, ownership, "
+                        "Return JSON with is_substantive (bool), "
+                        "should_follow_up (bool), "
+                        "missing_signals (array of short strings), "
+                        "and follow_up_angle (string or null). "
+                        "Assess whether the answer lacks concrete "
+                        "examples, metrics, reasoning, ownership, "
                         "or business impact."
                     ),
                 },
@@ -591,7 +613,10 @@ async def _depth_check(answer: str, lane: str) -> dict[str, Any]:
                 if str(item).strip()
             ]
             or fallback_missing,
-            "follow_up_angle": payload.get("follow_up_angle") or (fallback_missing[0] if fallback_missing else None),
+            "follow_up_angle": (
+                payload.get("follow_up_angle")
+                or (fallback_missing[0] if fallback_missing else None)
+            ),
         }
     except Exception:
         return {
@@ -803,7 +828,10 @@ async def check_completion(state: InterviewState) -> dict[str, Any]:
         int(lane_counts.get(lane, 0)) >= int(target)
         for lane, target in lane_targets.items()
     )
-    planned_total = int((state.get("interview_plan") or {}).get("target_total") or settings.max_questions)
+    plan = state.get("interview_plan") or {}
+    planned_total = int(
+        plan.get("target_total") or settings.max_questions
+    )
     complete = state.get("total_questions_asked", 0) >= settings.max_questions or (
         state.get("total_questions_asked", 0) >= planned_total
         and all_dimensions_covered

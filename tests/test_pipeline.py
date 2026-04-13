@@ -344,7 +344,10 @@ class TestDimensionPicking:
                 "role_title": "Product Analyst",
                 "seniority": "senior",
                 "rubric": [
-                    _dimension("System Design", description="Technical architecture and trade-offs"),
+                    _dimension(
+                        "System Design",
+                        description="Technical architecture and trade-offs",
+                    ),
                     _dimension(
                         "Communication",
                         description="Communication, collaboration, and stakeholder alignment",
@@ -399,8 +402,16 @@ class TestInterviewPlanning:
         assert interview._next_question_lane(state) == "project_deep_dive"
 
     def test_process_answer_route_skips_live_scoring_for_follow_up(self) -> None:
-        assert interview._after_process_answer_route(_state(answer_is_shallow=True)) == "generate_question"
-        assert interview._after_process_answer_route(_state(answer_is_shallow=False)) == "evaluate_answer"
+        assert (
+            interview._after_process_answer_route(
+                _state(answer_is_shallow=True)
+            ) == "generate_question"
+        )
+        assert (
+            interview._after_process_answer_route(
+                _state(answer_is_shallow=False)
+            ) == "evaluate_answer"
+        )
 
 
 class _FakeResult:
@@ -652,7 +663,10 @@ class TestAggregatorBoundaries:
             "messages": [
                 AIMessage(
                     content="Tell me about Python.",
-                    additional_kwargs={"dimension": "Python", "timestamp": "2026-04-09T00:00:00+00:00"},
+                    additional_kwargs={
+                        "dimension": "Python",
+                        "timestamp": "2026-04-09T00:00:00+00:00",
+                    },
                 ),
                 HumanMessage(
                     content="It was good.",
@@ -883,7 +897,9 @@ class TestIntegrityFlags:
         )
 
     @pytest.mark.asyncio
-    async def test_record_integrity_flag_persists(self, monkeypatch: pytest.MonkeyPatch, session_factory) -> None:
+    async def test_record_integrity_flag_persists(
+        self, monkeypatch: pytest.MonkeyPatch, session_factory
+    ) -> None:
         session_id = await _seed_session(session_factory, SessionStatus.IN_PROGRESS)
         monkeypatch.setattr(candidate_routes, "AsyncSessionFactory", session_factory)
 
@@ -958,7 +974,9 @@ class TestCandidateInterviewAPI:
             with client.websocket_connect(f"/ws/interviews/{session_id}") as websocket:
                 initial = websocket.receive_json()
                 assert initial["event"] == "interview_state"
-                assert initial["data"]["current_question"] == "Tell me about your Python backend work."
+                assert initial["data"]["current_question"] == (
+                    "Tell me about your Python backend work."
+                )
                 websocket.send_text("I build async APIs with Python and Postgres.")
                 completed = websocket.receive_json()
                 assert completed["event"] == "interview_complete"
@@ -972,7 +990,9 @@ class TestCandidateInterviewAPI:
     async def test_complete_session_persists_graph_state_updates(
         self, monkeypatch: pytest.MonkeyPatch, session_factory
     ) -> None:
-        session_id = await _seed_candidate_interview(session_factory, status=SessionStatus.IN_PROGRESS)
+        session_id = await _seed_candidate_interview(
+            session_factory, status=SessionStatus.IN_PROGRESS
+        )
         graph_state = {
             "candidate_context": {
                 "summary": "Backend engineer",
@@ -1002,7 +1022,11 @@ class TestCandidateInterviewAPI:
                 ),
             ],
         }
-        monkeypatch.setattr(candidate_routes, "_graph_state_values", AsyncMock(return_value=graph_state))
+        monkeypatch.setattr(
+            candidate_routes,
+            "_graph_state_values",
+            AsyncMock(return_value=graph_state),
+        )
         monkeypatch.setattr(candidate_routes, "_publish_job_event", AsyncMock())
         monkeypatch.setattr(candidate_routes, "_post_interview_pipeline", AsyncMock())
 
