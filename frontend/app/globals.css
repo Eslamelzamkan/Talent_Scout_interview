@@ -1,0 +1,85 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-50: #f0f4ff;
+  --color-brand-100: #dbe4ff;
+  --color-brand-200: #bac8ff;
+  --color-brand-300: #91a7ff;
+  --color-brand-400: #748ffc;
+  --color-brand-500: #5c7cfa;
+  --color-brand-600: #4c6ef5;
+  --color-brand-700: #4263eb;
+  --color-brand-800: #3b5bdb;
+  --color-brand-900: #364fc7;
+
+  --color-advance: #10b981;
+  --color-hold: #f59e0b;
+  --color-reject: #ef4444;
+
+  --font-sans: "Inter", system-ui, sans-serif;
+}
+
+:root {
+  --bg-primary: #0f1117;
+  --bg-card: #1a1d27;
+  --bg-hover: #242836;
+  --border: #2e3348;
+  --text-primary: #e4e7ef;
+  --text-secondary: #8b92a8;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* Glassmorphism card */
+.glass-card {
+  background: rgba(26, 29, 39, 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+
+/* Band badges */
+.badge-advance {
+  @apply bg-advance/15 text-advance border border-advance/30 px-3 py-1 rounded-full text-sm font-semibold;
+}
+.badge-hold {
+  @apply bg-hold/15 text-hold border border-hold/30 px-3 py-1 rounded-full text-sm font-semibold;
+}
+.badge-reject {
+  @apply bg-reject/15 text-reject border border-reject/30 px-3 py-1 rounded-full text-sm font-semibold;
+}
+
+/* Flag indicator */
+.flag-badge {
+  @apply bg-amber-500/15 text-amber-400 border border-amber-500/30 px-2 py-0.5 rounded text-xs font-medium;
+}
+
+/* Loading skeleton */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, var(--bg-card) 25%, var(--bg-hover) 50%, var(--bg-card) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 8px;
+}
+
+/* Mic indicator pulse */
+@keyframes pulse-mic {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(92, 124, 250, 0.5); }
+  50% { box-shadow: 0 0 0 12px rgba(92, 124, 250, 0); }
+}
+.mic-active {
+  animation: pulse-mic 1.5s ease-in-out infinite;
+}
+
+/* Smooth scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }

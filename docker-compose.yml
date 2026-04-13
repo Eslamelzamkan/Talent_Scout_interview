@@ -1,0 +1,61 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      - "${POSTGRES_PORT:-5433}:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-talentscout}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-talentscout}
+      POSTGRES_DB: ${POSTGRES_DB:-talentscout}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-talentscout} -d ${POSTGRES_DB:-talentscout}",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  chromadb:
+    image: chromadb/chroma:latest
+    ports:
+      - "8000:8000"
+    volumes:
+      - chroma_data:/chroma/chroma
+    environment:
+      ALLOW_RESET: "TRUE"
+    healthcheck:
+      test: ["CMD-SHELL", "bash -lc '</dev/tcp/127.0.0.1/8000'"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  livekit:
+    image: livekit/livekit-server:latest
+    ports:
+      - "7880:7880"
+    volumes:
+      - ./livekit.yaml:/etc/livekit/livekit.yaml:ro
+    command: ["--config", "/etc/livekit/livekit.yaml"]
+    healthcheck:
+      test: ["CMD", "/livekit-server", "--help"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  pgdata:
+  chroma_data:

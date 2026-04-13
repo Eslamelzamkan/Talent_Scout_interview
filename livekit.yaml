@@ -1,0 +1,9 @@
+port: 7880
+bind_addresses:
+  - ""
+rtc:
+  use_external_ip: false
+keys:
+  ${LIVEKIT_API_KEY}: ${LIVEKIT_API_SECRET}
+room:
+  auto_create: true

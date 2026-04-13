@@ -1,0 +1,73 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-talentscout}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-talentscout}
+      POSTGRES_DB: ${POSTGRES_DB:-talentscout}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-talentscout}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    cpus: 1.0
+    mem_limit: 1g
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    cpus: 0.5
+    mem_limit: 256m
+
+  chromadb:
+    image: chromadb/chroma:latest
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      ALLOW_RESET: "FALSE"
+    volumes:
+      - chroma_data:/chroma/chroma
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8000/api/v1/heartbeat"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+    cpus: 2.0
+    mem_limit: 2g
+
+  livekit:
+    image: livekit/livekit-server:latest
+    restart: unless-stopped
+    ports:
+      - "7880:7880"
+    volumes:
+      - ./livekit.yaml:/etc/livekit/livekit.yaml:ro
+    command: ["--config", "/etc/livekit/livekit.yaml"]
+    healthcheck:
+      test: ["CMD", "/livekit-server", "--help"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+    cpus: 1.0
+    mem_limit: 512m
+
+volumes:
+  postgres_data:
+  redis_data:
+  chroma_data:

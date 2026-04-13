@@ -1,0 +1,64 @@
+# Environment and secrets
+.env
+.env.local
+.env.*.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.benchmarks/
+
+# Caching
+.ruff_cache/
+.mypy_cache/
+.pip-cache/
+.pre-commit-cache/
+
+# Temporary
+.tmp/
+*.log
+test_out*.txt
+test_output*.txt
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node (frontend)
+frontend/node_modules/
+frontend/.next/
+node_modules/
+
+# Docker volumes (local)
+pgdata/
+redis_data/
+chroma_data/
+
+# Lock files (regenerated)
+uv.lock
+
+# Temp scripts
+_audit_*.py

@@ -1,0 +1,36 @@
+{
+  "name": "frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@livekit/components-react": "^2.9.20",
+    "@radix-ui/react-slot": "^1.1.0",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
+    "livekit-client": "^2.18.1",
+    "lucide-react": "^0.468.0",
+    "next": "16.2.3",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "recharts": "^2.15.0",
+    "tailwind-merge": "^2.5.5"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.2.2",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "autoprefixer": "^10.4.20",
+    "eslint": "9.39.4",
+    "eslint-config-next": "16.2.3",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}
